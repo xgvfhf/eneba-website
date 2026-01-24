@@ -1,3 +1,20 @@
+# Build results
+bin/
+obj/
+
+# Publish / deploy
+publish/
+app.zip
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Environment / secrets
+appsettings.Development.json
+
 # =========================
 # Node / Vite
 # =========================
@@ -38,3 +55,69 @@ Thumbs.db
 # Misc
 # =========================
 coverage/
+
+# Build results
+backend/Eneba.Api/Eneba.Api/bin/
+backend/Eneba.Api/Eneba.Api/obj/
+backend/Eneba.Api/Eneba.Api/publish/
+backend/Eneba.Api/Eneba.Api/*.user
+
+# User-specific files
+backend/Eneba.Api/Eneba.Api/.vs/
+backend/Eneba.Api/Eneba.Api/*.suo
+
+# Logs
+*.log
+
+# Build results
+backend/Eneba.Api/Eneba.Api/bin/
+backend/Eneba.Api/Eneba.Api/obj/
+backend/Eneba.Api/Eneba.Api/publish/
+backend/Eneba.Api/Eneba.Api/*.user
+
+# User-specific files
+backend/Eneba.Api/Eneba.Api/.vs/
+backend/Eneba.Api/Eneba.Api/*.suo
+
+# Logs
+*.log
+
+# Database
+backend/Eneba.Api/Eneba.Api/*.mdf
+backend/Eneba.Api/Eneba.Api/*.ldf
+
+# Node modules
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Backend (ASP.NET Core)
+backend/Eneba.Api/Eneba.Api/bin/
+backend/Eneba.Api/Eneba.Api/obj/
+backend/Eneba.Api/Eneba.Api/.vs/
+backend/Eneba.Api/Eneba.Api/publish/
+backend/Eneba.Api/Eneba.Api/*.user
+
+# VS Code, Copilot, IDE
+.vscode/
+backend/Eneba.Api/.vs/
+backend/Eneba.Api/Eneba.Api/.vs/
+**/CopilotIndices/
+*.suo
+
+# Frontend (Node.js/Vite)
+frontend/node_modules/
+frontend/dist/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
