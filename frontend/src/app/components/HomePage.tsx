@@ -24,7 +24,7 @@ const currencyRates: Record<string, { symbol: string; rate: number }> = {
 };
 
 export default function HomePage() {
-  const [searchQuery, setSearchQuery] = useState("split fiction");
+  const [searchQuery, setSearchQuery] = useState("");
   const [language, setLanguage] = useState("en");
   const [currency, setCurrency] = useState("EUR");
 
