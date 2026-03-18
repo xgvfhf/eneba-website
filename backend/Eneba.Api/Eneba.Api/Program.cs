@@ -1,31 +1,36 @@
 using Eneba.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Db
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
-// Add services to the container.
+// Controllers + Swagger
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
+// CORS
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("frontend", p =>
-        p.WithOrigins("http://localhost:5173")
-         .AllowAnyHeader()
-         .AllowAnyMethod());
+        p.WithOrigins(
+            "http://localhost:5173",
+            "https://eneba-web.azurewebsites.net" // <- сюда домен прод-фронта
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    // если фронт будет отправлять cookies/authorization header с credentials:
+    // .AllowCredentials()
+    );
 });
-
 
 var app = builder.Build();
 
+// ---- DB migrate + seed (как у тебя) ----
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
@@ -80,30 +85,35 @@ using (var scope = app.Services.CreateScope())
     }
     catch (SqlException ex)
     {
-        // Логирование и понятное сообщение — приложение падает чтобы не работать с некорректной БД.
-        logger.LogError(ex, "Ошибка подключения к Azure SQL: {Message}. Проверьте сетевые настройки сервера и строку подключения.", ex.Message);
+        logger.LogError(ex, "SQL connection error: {Message}", ex.Message);
         throw;
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Ошибка при инициализации БД: {Message}", ex.Message);
+        logger.LogError(ex, "DB init error: {Message}", ex.Message);
         throw;
     }
 }
 
-
-app.UseCors("frontend");
-
-// Configure the HTTP request pipeline.
+// ---- HTTP pipeline ----
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// Обычно можно оставить. Если будут проблемы с редиректами на Azure — временно отключим.
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+// CORS должно быть между Routing и endpoints
+app.UseCors("frontend");
+
 app.UseAuthorization();
+
+
+//app.UseWelcomePage();
 
 app.MapControllers();
 

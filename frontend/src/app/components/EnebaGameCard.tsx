@@ -1,78 +1,101 @@
-import { Heart } from "lucide-react";
-import { Badge } from "@/app/components/ui/badge";
+import React from "react";
+import { ShoppingCart } from "lucide-react";
 
-interface EnebaGameCardProps {
+export type EnebaGameCardProps = {
   id: string;
   title: string;
   image: string;
+  platform: string;
+  likes: number;
+  likedByMe: boolean;
   originalPrice: number;
   discountedPrice: number;
   cashback: number;
-  platform: string;
-  likes: number;
-  currencySymbol?: string;
-}
+  currencySymbol: string;
+  onToggleLike?: (id: string) => void | Promise<void>;
+};
 
-export function EnebaGameCard({
-  title,
-  image,
-  originalPrice,
-  discountedPrice,
-  cashback,
-  platform,
-  likes,
-  currencySymbol = "€",
-}: EnebaGameCardProps) {
+export function EnebaGameCard(props: EnebaGameCardProps) {
+  const {
+    id,
+    title,
+    image,
+    platform,
+    likes,
+    likedByMe,
+    originalPrice,
+    discountedPrice,
+    cashback,
+    currencySymbol,
+    onToggleLike,
+  } = props;
+
+  const handleLikeClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!onToggleLike) return;
+    await onToggleLike(id);
+  };
+
   return (
-    <div className="bg-[#2a1f4a] rounded-lg overflow-hidden hover:ring-2 hover:ring-purple-400/50 transition-all cursor-pointer shadow-lg">
-      <div className="relative aspect-[3/4] overflow-hidden bg-gray-900">
+    <div className="group bg-gradient-to-b from-[#4a3066] to-[#3a2555] rounded-2xl overflow-hidden hover:ring-2 hover:ring-purple-400/60 transition-all cursor-pointer shadow-lg hover:shadow-[0_0_25px_rgba(168,85,247,0.4)] relative">
+      {/* Изображение с кнопкой лайка */}
+      <div className="relative overflow-hidden">
         <img 
           src={image} 
           alt={title}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          className="w-full h-56 object-cover block group-hover:scale-105 transition-transform duration-300"
+          loading="lazy"
         />
-        <Badge className="absolute bottom-3 left-3 bg-[#00d4aa] hover:bg-[#00d4aa] text-white text-[10px] font-bold px-2.5 py-0.5 flex items-center gap-1 shadow-md">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="6" cy="6" r="5" fill="white" />
-            <path d="M6 2L7.5 5L11 5.5L8.5 8L9 11.5L6 9.5L3 11.5L3.5 8L1 5.5L4.5 5L6 2Z" fill="#00d4aa" />
-          </svg>
-          CASHBACK
-        </Badge>
+        
+        {/* ❤️ Кнопка лайка */}
+        <button
+          type="button"
+          onClick={handleLikeClick}
+          className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full px-3 py-1.5 bg-black/40 backdrop-blur-sm text-white hover:bg-black/60 transition-colors"
+          aria-label={likedByMe ? "Unlike" : "Like"}
+          title={likedByMe ? "Unlike" : "Like"}
+        >
+          <span className="text-lg leading-none">
+            {likedByMe ? "♥" : "♡"}
+          </span>
+          <span className="text-sm font-medium">{likes}</span>
+        </button>
       </div>
       
-      <div className="p-3.5">
-        <h3 className="text-white text-sm font-medium mb-2.5 line-clamp-2 min-h-[2.5rem] leading-tight">
+      {/* Информация о игре */}
+      <div className="p-4">
+        <h3 className="text-white font-semibold text-base line-clamp-2 min-h-[2.5rem] leading-tight mb-3">
           {title}
         </h3>
         
-        <div className="flex items-center gap-1 mb-3">
-          <span className="text-[#00d4aa] text-[11px] font-medium">{platform}</span>
+        <div className="text-emerald-400 text-sm font-medium mb-4 uppercase tracking-wide">
+          {platform}
         </div>
         
         <div className="flex items-baseline gap-2 mb-2">
-          <span className="text-white/40 text-[11px] line-through">
-            {currencySymbol}{originalPrice.toFixed(2)}
+          <span className="text-white text-2xl font-bold">
+            {currencySymbol}{discountedPrice.toFixed(2)}
           </span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-white text-xl font-bold">
-              {currencySymbol}{discountedPrice.toFixed(2)}
+          
+          {originalPrice > discountedPrice && (
+            <span className="text-white/50 text-sm line-through">
+              {currencySymbol}{originalPrice.toFixed(2)}
             </span>
-            <div className="w-4 h-4 rounded-full bg-[#00d4aa] flex items-center justify-center">
-              <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 4L3 6L7 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-          </div>
+          )}
         </div>
         
-        <div className="text-white/50 text-[11px] mb-3">
+        <div className="text-white/60 text-xs">
           Cashback: {currencySymbol}{cashback.toFixed(2)}
         </div>
-        
-        <div className="flex items-center gap-1 text-white/50 text-[11px]">
-          <Heart className="w-3 h-3" />
-          <span>{likes}</span>
-        </div>
+      </div>
+
+      {/* Кнопка "Купить" - поднимается снизу при наведении */}
+      <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+        <button className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 px-4 flex items-center justify-center gap-2 shadow-lg transition-colors">
+          <ShoppingCart className="w-5 h-5" />
+          <span>Add to cart</span>
+        </button>
       </div>
     </div>
   );

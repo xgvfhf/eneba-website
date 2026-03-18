@@ -2,7 +2,9 @@
 
 public class Offer
 {
+
     public int Id { get; set; }
+    public ICollection<OfferLike> Likes { get; set; } = new List<OfferLike>();
 
     public string Title { get; set; } = null!;
     public string GameName { get; set; } = null!;
